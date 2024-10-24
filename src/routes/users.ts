@@ -4,7 +4,7 @@ import { UsersResponse } from "../types/user";
 import { Todo, TodosResponse } from "../types/todo";
 import { Post, PostsResponse } from "../types/post";
 import { Comment, CommentsResponse } from "../types/comment";
-import { Review, ReviewsResponse } from '../types/review';
+import { Review, ReviewsResponse } from "../types/review";
 
 const router = Router();
 
@@ -77,7 +77,7 @@ router.get("/:id", async (req, res, next) => {
     }
 
     const response: UserResponse = {
-      message: "유저 목록 조회 성공",
+      message: "유저 조회 성공",
       user
     };
 
@@ -181,6 +181,134 @@ router.get("/:id/reviews", async (req, res, next) => {
   } catch (error) {
     next(error);
   }
+});
+
+router.post("/", async (req, res, next) => {
+  try {
+    const { username, email, phone, address } = req.body;
+
+    // 더미 데이터를 만듭니다 (실제 DB 수정 대신)
+    const dummyData = {
+      id: 21,
+      username,
+      phone,
+      address,
+      email,
+      createdAt: new Date()
+    };
+
+    res.status(201).json({
+      message: "유저 생성 성공",
+      user: dummyData
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.put("/:id", async (req, res, next) => {
+  try {
+    const { username = "", phone = "", address = "", email = "" } = req.body;
+
+    const { id } = req.params;
+    const sql = "SELECT * FROM users WHERE id=?";
+    const values = [id];
+
+    if (!req.poolConnection) {
+      throw new Error("Database connection not found");
+    }
+    const [rows] = await req.poolConnection.query(sql, values);
+    const user = (rows as User[])[0];
+
+    if (!user) {
+      // 유저가 존재하지 않을 경우 404 Not Found 응답
+      res.status(404).json({ message: "해당 유저를 찾을 수 없습니다." });
+      return;
+    }
+
+    // 더미 데이터를 만듭니다 (실제 DB 수정 대신)
+    const dummyData = {
+      user: {
+        ...user,
+        username,
+        email,
+        phone,
+        address
+      }
+    };
+
+    const response = {
+      message: "유저 수정 성공",
+      user: dummyData
+    };
+
+    res.status(200).json(response);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.patch("/:id", async (req, res, next) => {
+  try {
+    const { username, phone, address, email } = req.body;
+
+    const { id } = req.params;
+    const sql = "SELECT * FROM users WHERE id=?";
+    const values = [id];
+
+    if (!req.poolConnection) {
+      throw new Error("Database connection not found");
+    }
+    const [rows] = await req.poolConnection.query(sql, values);
+    const user = (rows as User[])[0];
+
+    if (!user) {
+      // 유저가 존재하지 않을 경우 404 Not Found 응답
+      res.status(404).json({ message: "해당 유저를 찾을 수 없습니다." });
+      return;
+    }
+
+    // 더미 데이터를 만듭니다 (실제 DB 수정 대신)
+    const dummyData = {
+      ...user,
+      ...(username !== undefined && { username }),
+      ...(email !== undefined && { email }),
+      ...(phone !== undefined && { phone }),
+      ...(address !== undefined && { address })
+    };
+
+    const response = {
+      message: "유저 수정 성공",
+      user: dummyData
+    };
+
+    res.status(200).json(response);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.delete("/:id", async (req, res, next) => {
+  const { id } = req.params;
+  const sql = "SELECT * FROM users WHERE id = ?";
+  const vaules = [id];
+
+  if (!req.poolConnection) {
+    throw new Error("Database connection not found");
+  }
+
+  const [rows] = await req.poolConnection.query(sql, vaules);
+  const user = (rows as User[])[0];
+  const response = { message: `${id}번 유저 삭제 성공` };
+
+  if (!user) {
+    res.status(404).json({
+      message: "해당 유저를 찾을 수 없습니다."
+    });
+    return;
+  }
+
+  res.status(200).json(response);
 });
 
 export default router;
