@@ -94,6 +94,13 @@ router.get("/:id/comments", async (req, res, next) => {
     const [rows] = await req.poolConnection.query(sql, values);
     const comments = rows as Comment[];
 
+    if (comments.length === 0) {
+      res
+        .status(404)
+        .json({ message: "해당 게시물 댓글 목록을 찾을 수 없습니다." });
+        return;
+    }
+
     const response: CommentsResponse = {
       message: "게시물 댓글 목록 조회 성공",
       comments
