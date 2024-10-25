@@ -100,6 +100,13 @@ router.get("/:id/todos", async (req, res, next) => {
     const [rows] = await req.poolConnection.query(sql, values);
     const todos = rows as Todo[];
 
+    if (todos.length === 0) {
+      res
+        .status(404)
+        .json({ message: "해당 유저 할 일 목록을 찾을 수 없습니다." });
+        return;
+    }
+
     const response: TodosResponse = {
       message: "유저 할 일 목록 조회 성공",
       todos
@@ -123,6 +130,13 @@ router.get("/:id/posts", async (req, res, next) => {
     }
     const [rows] = await req.poolConnection.query(sql, values);
     const posts = rows as Post[];
+    
+    if (posts.length === 0) {
+      res
+        .status(404)
+        .json({ message: "해당 유저 게시물 목록을 찾을 수 없습니다." });
+        return;
+    }
 
     const response: PostsResponse = {
       message: "유저 게시물 목록 조회 성공",
@@ -148,6 +162,13 @@ router.get("/:id/comments", async (req, res, next) => {
     const [rows] = await req.poolConnection.query(sql, values);
     const comments = rows as Comment[];
 
+    if (comments.length === 0) {
+      res
+        .status(404)
+        .json({ message: "해당 유저 댓글 목록을 찾을 수 없습니다." });
+        return;
+    }
+
     const response: CommentsResponse = {
       message: "유저 댓글 목록 조회 성공",
       comments
@@ -172,8 +193,15 @@ router.get("/:id/reviews", async (req, res, next) => {
     const [rows] = await req.poolConnection.query(sql, values);
     const reviews = rows as Review[];
 
+    if (reviews.length === 0) {
+      res
+        .status(404)
+        .json({ message: "해당 유저 리뷰 목록을 찾을 수 없습니다." });
+        return;
+    }
+
     const response: ReviewsResponse = {
-      message: "유저 댓글 목록 조회 성공",
+      message: "유저 리뷰 목록 조회 성공",
       reviews
     };
 
