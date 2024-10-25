@@ -28,9 +28,18 @@ router.get("/", async (req, res, next) => {
       }
 
       const [rows] = await req.poolConnection.query(sql, values);
+      const comments = rows as Comment[];
+
+      if (comments.length === 0) {
+        res
+          .status(404)
+          .json({ message: "해당 유저 댓글 목록을 찾을 수 없습니다." });
+          return;
+      }
+
       const response: CommentsResponse = {
         message: "유저 댓글 목록 조회 성공",
-        comments: rows as Comment[]
+        comments
       };
 
       res.status(200).json(response);
@@ -50,9 +59,18 @@ router.get("/", async (req, res, next) => {
       }
 
       const [rows] = await req.poolConnection.query(sql, values);
+      const comments = rows as Comment[];
+
+      if (comments.length === 0) {
+        res
+          .status(404)
+          .json({ message: "해당 게시물 댓글 목록을 찾을 수 없습니다." });
+          return;
+      }
+
       const response: CommentsResponse = {
         message: "게시물 댓글 목록 조회 성공",
-        comments: rows as Comment[]
+        comments
       };
 
       res.status(200).json(response);
@@ -114,7 +132,6 @@ router.get("/:id", async (req, res, next) => {
     const comment = (rows as Comment[])[0];
 
     if (!comment) {
-      // 유저가 존재하지 않을 경우 404 Not Found 응답
       res.status(404).json({ message: "해당 댓글을 찾을 수 없습니다." });
       return;
     }
@@ -151,41 +168,6 @@ router.post("/", async (req, res, next) => {
   }
 });
 
-router.patch("/:id", async (req, res, next) => {
-  try {
-    const { id } = req.params;
-    const { content } = req.body;
-
-    const sql = "SELECT * FROM comments WHERE id = ?";
-    const values = [id];
-
-    if (!req.poolConnection) {
-      throw new Error("Database connection not found");
-    }
-
-    const [rows] = await req.poolConnection?.query(sql, values);
-    const comment = (rows as Comment[])[0];
-
-    if (!comment) {
-      res.status(404).json({ message: "해당 댓글이 존재하지 않습니다." });
-      return;
-    }
-
-    // 더미 데이터를 만듭니다 (실제 DB 수정 대신)
-    const dummyData = {
-      ...comment,
-      ...(content !== undefined && { content })
-    };
-
-    res.status(200).json({
-      message: "댓글 수정 성공",
-      comment: dummyData
-    });
-  } catch (error) {
-    next(error);
-  }
-});
-
 router.put("/:id", async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -210,6 +192,42 @@ router.put("/:id", async (req, res, next) => {
     const dummyData = {
       ...comment,
       content
+    };
+
+    res.status(200).json({
+      message: "댓글 수정 성공",
+      comment: dummyData
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+
+router.patch("/:id", async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { content } = req.body;
+
+    const sql = "SELECT * FROM comments WHERE id = ?";
+    const values = [id];
+
+    if (!req.poolConnection) {
+      throw new Error("Database connection not found");
+    }
+
+    const [rows] = await req.poolConnection?.query(sql, values);
+    const comment = (rows as Comment[])[0];
+
+    if (!comment) {
+      res.status(404).json({ message: "해당 댓글이 존재하지 않습니다." });
+      return;
+    }
+
+    // 더미 데이터를 만듭니다 (실제 DB 수정 대신)
+    const dummyData = {
+      ...comment,
+      ...(content !== undefined && { content })
     };
 
     res.status(200).json({
