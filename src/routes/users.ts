@@ -236,7 +236,7 @@ router.post("/", async (req, res, next) => {
 
 router.put("/:id", async (req, res, next) => {
   try {
-    const { username = "", phone = "", address = "", email = "" } = req.body;
+    const { username, phone, address, email } = req.body;
 
     const { id } = req.params;
     const sql = "SELECT * FROM users WHERE id=?";

@@ -137,7 +137,7 @@ router.post("/", async (req, res, next) => {
 router.put("/:id", async (req, res, next) => {
   try {
     const { id } = req.params;
-    const { title = "", content = "", imgUrl = "" } = req.body;
+    const { title, content, imgUrl } = req.body;
 
     const sql = "SELECT * FROM posts WHERE id = ?";
     const values = [id];

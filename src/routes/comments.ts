@@ -171,7 +171,7 @@ router.post("/", async (req, res, next) => {
 router.put("/:id", async (req, res, next) => {
   try {
     const { id } = req.params;
-    const { content = "" } = req.body;
+    const { content } = req.body;
 
     const sql = "SELECT * FROM comments WHERE id = ?";
     const values = [id];
