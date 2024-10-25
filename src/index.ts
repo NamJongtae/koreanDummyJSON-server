@@ -4,8 +4,12 @@ import dotenv from "dotenv";
 import usersRouter from "./routes/users";
 import postsRouter from "./routes/posts";
 import commentsRouter from "./routes/comments";
+import todosRouter from "./routes/todos";
+import booksRouter from "./routes/books";
+import reviewsRouter from "./routes/reviews";
 import poolConnection from "./middlewares/poolConnection";
 import errorHandler from "./middlewares/errorHandler";
+
 
 dotenv.config();
 
@@ -18,6 +22,9 @@ app.use(cors({ origin: process.env.CLIENT_URL || "http://localhost:3000" }));
 app.use("/users", usersRouter);
 app.use("/posts", postsRouter);
 app.use("/comments", commentsRouter);
+app.use("/todos", todosRouter);
+app.use("/books", booksRouter);
+app.use("/reviews", reviewsRouter);
 
 app.get("/", (req, res) => {
   res.send("Hello World!");
