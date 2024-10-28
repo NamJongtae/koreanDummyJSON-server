@@ -9,8 +9,10 @@ import booksRouter from "./routes/books";
 import reviewsRouter from "./routes/reviews";
 import authRouter from "./routes/auth";
 import imageRouter from "./routes/image";
+import requestCountRouter from "./routes/requestCount";
 import poolConnection from "./middlewares/poolConnection";
 import errorHandler from "./middlewares/errorHandler";
+import requestCounter from "./middlewares/requestCounter";
 
 dotenv.config();
 
@@ -20,6 +22,7 @@ const app = express();
 app.use(express.json());
 app.use(poolConnection);
 app.use(cors({ origin: process.env.CLIENT_URL || "http://localhost:3000" }));
+app.use(requestCounter);
 
 app.use("/users", usersRouter);
 app.use("/posts", postsRouter);
@@ -29,6 +32,7 @@ app.use("/books", booksRouter);
 app.use("/reviews", reviewsRouter);
 app.use("/auth", authRouter);
 app.use("/image", imageRouter);
+app.use("/request-count", requestCountRouter);
 
 app.get("/", (req, res) => {
   res.send("Hello World!");
