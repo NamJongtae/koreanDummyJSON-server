@@ -23,6 +23,7 @@ app.use(express.json());
 app.use(poolConnection);
 app.use(cors({ origin: process.env.CLIENT_URL || "http://localhost:3000" }));
 app.use(requestCounter);
+app.use(express.static("public"));
 
 app.use("/users", usersRouter);
 app.use("/posts", postsRouter);
@@ -35,7 +36,7 @@ app.use("/image", imageRouter);
 app.use("/request-count", requestCountRouter);
 
 app.get("/", (req, res) => {
-  res.send("Hello World!");
+  res.sendFile(__dirname + "/public/index.html");
 });
 
 app.use(errorHandler);
