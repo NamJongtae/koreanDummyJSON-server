@@ -104,7 +104,7 @@ router.get("/:id/todos", async (req, res, next) => {
       res
         .status(404)
         .json({ message: "해당 유저 할 일 목록을 찾을 수 없습니다." });
-        return;
+      return;
     }
 
     const response: TodosResponse = {
@@ -130,12 +130,12 @@ router.get("/:id/posts", async (req, res, next) => {
     }
     const [rows] = await req.poolConnection.query(sql, values);
     const posts = rows as Post[];
-    
+
     if (posts.length === 0) {
       res
         .status(404)
         .json({ message: "해당 유저 게시물 목록을 찾을 수 없습니다." });
-        return;
+      return;
     }
 
     const response: PostsResponse = {
@@ -166,7 +166,7 @@ router.get("/:id/comments", async (req, res, next) => {
       res
         .status(404)
         .json({ message: "해당 유저 댓글 목록을 찾을 수 없습니다." });
-        return;
+      return;
     }
 
     const response: CommentsResponse = {
@@ -197,7 +197,7 @@ router.get("/:id/reviews", async (req, res, next) => {
       res
         .status(404)
         .json({ message: "해당 유저 리뷰 목록을 찾을 수 없습니다." });
-        return;
+      return;
     }
 
     const response: ReviewsResponse = {
@@ -317,26 +317,30 @@ router.patch("/:id", async (req, res, next) => {
 });
 
 router.delete("/:id", async (req, res, next) => {
-  const { id } = req.params;
-  const sql = "SELECT * FROM users WHERE id = ?";
-  const vaules = [id];
+  try {
+    const { id } = req.params;
+    const sql = "SELECT * FROM users WHERE id = ?";
+    const vaules = [id];
 
-  if (!req.poolConnection) {
-    throw new Error("Database connection not found");
+    if (!req.poolConnection) {
+      throw new Error("Database connection not found");
+    }
+
+    const [rows] = await req.poolConnection.query(sql, vaules);
+    const user = (rows as User[])[0];
+    const response = { message: `${id}번 유저 삭제 성공` };
+
+    if (!user) {
+      res.status(404).json({
+        message: "해당 유저를 찾을 수 없습니다."
+      });
+      return;
+    }
+
+    res.status(200).json(response);
+  } catch (error) {
+    next(error);
   }
-
-  const [rows] = await req.poolConnection.query(sql, vaules);
-  const user = (rows as User[])[0];
-  const response = { message: `${id}번 유저 삭제 성공` };
-
-  if (!user) {
-    res.status(404).json({
-      message: "해당 유저를 찾을 수 없습니다."
-    });
-    return;
-  }
-
-  res.status(200).json(response);
 });
 
 export default router;

@@ -98,7 +98,7 @@ router.get("/:id/comments", async (req, res, next) => {
       res
         .status(404)
         .json({ message: "해당 게시물 댓글 목록을 찾을 수 없습니다." });
-        return;
+      return;
     }
 
     const response: CommentsResponse = {
@@ -217,26 +217,30 @@ router.patch("/:id", async (req, res, next) => {
 });
 
 router.delete("/:id", async (req, res, next) => {
-  const { id } = req.params;
-  const sql = "SELECT * FROM posts WHERE id = ?";
-  const vaules = [id];
+  try {
+    const { id } = req.params;
+    const sql = "SELECT * FROM posts WHERE id = ?";
+    const vaules = [id];
 
-  if (!req.poolConnection) {
-    throw new Error("Database connection not found");
+    if (!req.poolConnection) {
+      throw new Error("Database connection not found");
+    }
+
+    const [rows] = await req.poolConnection.query(sql, vaules);
+    const post = (rows as Post[])[0];
+    const response = { message: `${id}번 게시물 삭제 성공` };
+
+    if (!post) {
+      res.status(404).json({
+        message: "해당 게시물을 찾을 수 없습니다."
+      });
+      return;
+    }
+
+    res.status(200).json(response);
+  } catch (error) {
+    next(error);
   }
-
-  const [rows] = await req.poolConnection.query(sql, vaules);
-  const post = (rows as Post[])[0];
-  const response = { message: `${id}번 게시물 삭제 성공` };
-
-  if (!post) {
-    res.status(404).json({
-      message: "해당 게시물을 찾을 수 없습니다."
-    });
-    return;
-  }
-
-  res.status(200).json(response);
 });
 
 export default router;
