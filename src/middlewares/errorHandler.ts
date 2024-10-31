@@ -6,7 +6,7 @@ const errorHandler = (
   response: Response,
   next: NextFunction
 ) => {
-  const statusCode = error.status || 500; 
+  const statusCode = error.status || 500;
 
   console.error(`
     Error occurred:
@@ -16,15 +16,11 @@ const errorHandler = (
     - Stack: ${error.stack}
   `);
 
-  response
-    .status(statusCode)
-    .json({
-      status: statusCode,
-      message:
-        statusCode === 500
-          ? "서버 에러가 발생하였습니다. 잠시 후 다시 시도해주세요."
-          : error.message
-    });
+  response.status(statusCode).json({
+    message: error.message
+      ? error.message
+      : "서버 에러가 발생하였습니다. 잠시 후 다시 시도해주세요."
+  });
 };
 
 export default errorHandler;
