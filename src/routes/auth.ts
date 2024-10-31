@@ -1,5 +1,6 @@
 import { Router } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
+import CustomError from "../lib/customError";
 
 const router = Router();
 
@@ -30,7 +31,18 @@ router.post("/login", (req, res, next) => {
       refreshToekn
     });
   } catch (error) {
-    next(error);
+    if (error instanceof Error) {
+      if (
+        error.message === "jwt malformed" ||
+        error.message === "invalid token"
+      ) {
+        next(new CustomError("유효하지 않은 토큰입니다.", 401));
+      } else if (error.message === "jwt expired") {
+        next(new CustomError("만료된 토큰입니다.", 401));
+      } else {
+        next(new CustomError(error.message, 500));
+      }
+    }
   }
 });
 
@@ -39,7 +51,7 @@ router.get("/refresh", (req, res, next) => {
     const authHeader = req.headers.authorization;
 
     if (!authHeader) {
-      res.status(401).json({ error: "토큰이 존재하지 않습니다." });
+      res.status(401).json({ message: "토큰이 존재하지 않습니다." });
       return;
     }
 
@@ -57,7 +69,18 @@ router.get("/refresh", (req, res, next) => {
     });
     return;
   } catch (error) {
-    next(error);
+    if (error instanceof Error) {
+      if (
+        error.message === "jwt malformed" ||
+        error.message === "invalid token"
+      ) {
+        next(new CustomError("유효하지 않은 토큰입니다.", 401));
+      } else if (error.message === "jwt expired") {
+        next(new CustomError("만료된 토큰입니다.", 401));
+      } else {
+        next(new CustomError(error.message, 500));
+      }
+    }
   }
 });
 
@@ -79,7 +102,18 @@ router.get("/user", (req, res, next) => {
       userId: decoded.id
     });
   } catch (error) {
-    next(error);
+    if (error instanceof Error) {
+      if (
+        error.message === "jwt malformed" ||
+        error.message === "invalid token"
+      ) {
+        next(new CustomError("유효하지 않은 토큰입니다.", 401));
+      } else if (error.message === "jwt expired") {
+        next(new CustomError("만료된 토큰입니다.", 401));
+      } else {
+        next(new CustomError(error.message, 500));
+      }
+    }
   }
 });
 
