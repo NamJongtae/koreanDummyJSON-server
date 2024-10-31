@@ -74,7 +74,7 @@ router.get("/:id", async (req, res, next) => {
     }
 
     const response: BookResponse = {
-      message: "할 일 조회 성공",
+      message: "책 조회 성공",
       book
     };
 
