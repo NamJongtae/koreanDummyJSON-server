@@ -5,18 +5,17 @@ const requestCounter = async (
   res: Response,
   next: NextFunction
 ) => {
-  if (req.path !== "/" && req.path !== "/request-count") {
-    const clientIp = req.ip || req.header("x-forwarded-for")?.split(",")[0];
-    console.log(clientIp);
+  const clientIp = req.ip || req.header("x-forwarded-for")?.split(",")[0];
+  console.log(clientIp);
 
-    try {
-      await fetch(`${process.env.BASE_URL}/request-count`, {
-        method: "POST"
-      });
-    } catch (error) {
-      next(error);
-    }
+  try {
+    await fetch(`${process.env.BASE_URL}/request-count`, {
+      method: "POST"
+    });
+  } catch (error) {
+    next(error);
   }
+
   next();
 };
 

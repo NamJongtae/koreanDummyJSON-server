@@ -22,17 +22,16 @@ const app = express();
 app.use(express.json());
 app.use(poolConnection);
 app.use(cors({ origin: process.env.CLIENT_URL || "http://localhost:3000" }));
-app.use(requestCounter);
 app.use(express.static("public"));
 
-app.use("/users", usersRouter);
-app.use("/posts", postsRouter);
-app.use("/comments", commentsRouter);
-app.use("/todos", todosRouter);
-app.use("/books", booksRouter);
-app.use("/reviews", reviewsRouter);
-app.use("/auth", authRouter);
-app.use("/image", imageRouter);
+app.use("/users", requestCounter, usersRouter);
+app.use("/posts", requestCounter, postsRouter);
+app.use("/comments", requestCounter, commentsRouter);
+app.use("/todos", requestCounter, todosRouter);
+app.use("/books", requestCounter, booksRouter);
+app.use("/reviews", requestCounter, reviewsRouter);
+app.use("/auth", requestCounter, authRouter);
+app.use("/image", requestCounter, imageRouter);
 app.use("/request-count", requestCountRouter);
 
 app.get("/", (req, res) => {
