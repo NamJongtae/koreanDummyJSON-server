@@ -17,6 +17,7 @@
     "dotenv": "^16.4.5",
     "jsonwebtoken": "^9.0.2",
     "mysql2": "^3.11.3",
+    "serve-favicon": "^2.5.0",
     "typescript": "^5.6.3"
   },
   "devDependencies": {
@@ -24,6 +25,7 @@
     "@types/express": "^5.0.0",
     "@types/jsonwebtoken": "^9.0.7",
     "@types/node": "^22.7.8",
+    "@types/serve-favicon": "^2.5.7",
     "@typescript-eslint/eslint-plugin": "^8.11.0",
     "@typescript-eslint/parser": "^8.11.0",
     "eslint": "^9.13.0",
